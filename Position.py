@@ -1,13 +1,12 @@
 class Position:
-    def __init__(self, s, e, r, c):
-        self.start = s
-        self.end = e
-        self.row = r
-        self.col = c
+    def __init__(self, startRow, startCol, endRow, endCol):
+        self.startRow = startRow
+        self.startCol = startCol
+        self.endRow = endRow
+        self.endCol = endCol
 
-    def returnPosition(self):
-        a = [self.row, self.col, self.start, self.end]
-        return a
+    def __str__(self):
+        return [self.startRow, self.startCol, self.endRow, self.endCol]
 
 
 

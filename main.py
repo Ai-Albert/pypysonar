@@ -12,4 +12,5 @@ def main(filename):
 
 
 if __name__ == "__main__":
-    print(main("a.py"))
+    index = main("a.py")
+    print(index)

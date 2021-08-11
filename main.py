@@ -1,6 +1,7 @@
 import indexer
 import parser
 
+
 def main(filename):
     # code -> ast -> index
     with open(filename, 'r') as file:

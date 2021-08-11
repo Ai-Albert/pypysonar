@@ -9,26 +9,27 @@ def getChildren(node):
     return ast.iter_child_nodes(node)
 
 
-def shouldIndex(node):
-    return isinstance(node, (ast.FunctionDef, ast.arg, ast.Name))
-
-
 def isNamespace(node):
     return isinstance(node, ast.FunctionDef)
 
 
 def createNamespace(namespace, name, position):
+    assert name and position
     inner_ns = { name : position }
     namespace["NS" + name] = inner_ns
     return inner_ns
 
 
-def getName(node):
+def shouldIndex(node):
     name = _getName(node)
-    if _isBuiltin(name):
-        return None
+    if not name:
+        return False, None, None
+    elif _isBuiltin(name):
+        return False, None, None
     else:
-        return name
+        position = getPosition(node)
+        assert position
+        return True, name, position
 
 
 def _getName(node):
@@ -48,18 +49,15 @@ def _isBuiltin(name):
 
 def getPosition(node):
     try:
-        startRow = node.lineno
-        startCol = node.col_offset + _getStartOffset(node)
-        endRow = startRow
-        endCol = startCol + len(getName(node))
-        return startRow, startCol, endRow, endCol
+        row = node.lineno
+        col = node.col_offset + _getStartOffset(node)
+        return row, col, len(_getName(node))
     except:
         return None
 
 
 def _getStartOffset(node):
-    # TODO: hack for the "f" function on line #3 in a.py
     if isinstance(node, ast.FunctionDef):
-        return 4
+        return len("def ")  # FIXME
     else:
         return 0

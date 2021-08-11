@@ -11,14 +11,11 @@ def index(tree):
 def _walk(node, namespace, level, separator):
     print(level, ':', separator*level, node)
 
-    name     = parser.getName(node)
-    position = parser.getPosition(node)
-
-    if parser.shouldIndex(node):
-        _try_add(namespace, name, position)
-
-    if parser.isNamespace(node):
-        namespace = parser.createNamespace(namespace, name, position)
+    shouldIndex, name, position = parser.shouldIndex(node)
+    if shouldIndex:
+        _add(namespace, name, position)
+        if parser.isNamespace(node):
+            namespace = parser.createNamespace(namespace, name, position)
 
     for child in parser.getChildren(node):
         _walk(child, namespace, level+1, separator)
@@ -26,10 +23,9 @@ def _walk(node, namespace, level, separator):
     return namespace
 
 
-def _try_add(namespace, name, position):
-    if name is not None:
-        assert position is not None
-        try:
-            namespace[name].append(position)
-        except KeyError:
-            namespace[name] = [position]
+def _add(namespace, name, position):
+    assert name and position
+    try:
+        namespace[name].append(position)
+    except KeyError:
+        namespace[name] = [position]

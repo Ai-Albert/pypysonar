@@ -10,23 +10,24 @@ def show_ast():
         walk(namespace, tree)
         print(namespace)
 
+def walk(namespace, node, level = 0, sep = '\t'):
+    print(level, ":", sep * level, node)
+    print(namespace)
 
-def walk(namespace, node, level=0, sep='\t'):
-    print(level, ':', sep * level, node)
     name = parser.getName(node)
     position = parser.getPosition(node)
 
     if parser.shouldIndex(node):
         parser.index(namespace, name, position)
 
-    newNS = {}
-    createdNS = False
-    if parser.shouldCreateNamespace(node):
-        parser.createNamespace(namespace, newNS, name, position)
-        createdNS = True
-
     for n in ast.iter_child_nodes(node):
-        if createdNS:
-            walk(newNS, n, level+1)
+        if parser.shouldCreateNamespace(node):
+            ns = {}
+            parser.createNamespace(namespace, ns, name, position)
+            walk(ns, n, level + 1)
         else:
-            walk(namespace, n, level+1)
+            walk(namespace, n, level + 1)
+
+
+
+

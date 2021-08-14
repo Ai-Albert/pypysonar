@@ -1,5 +1,16 @@
-from ASTGenerator import show_ast
+import indexer
+import parser
 
 
-if __name__ == '__main__':
-    show_ast()
+def main(filename):
+    # code -> ast -> index
+    with open(filename, 'r') as file:
+        code = file.read()
+        tree = parser.parse(code)
+        index = indexer.index(tree)
+        return index
+
+
+if __name__ == "__main__":
+    index = main("a.py")
+    print(index)
